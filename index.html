@@ -5,20 +5,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kalender</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/calender_style.css">
 </head>
 
 <body>
     <div class="calendar-app">
-        <!-- Hier kommt später (durch JS) die dynamische Überschrift hinein -->
+
         <h1 id="page-title">... lädt ...</h1>
 
-        <!-- Hier kommt später der lange dynamische Infotext hinein -->
+
         <p id="info-text">Informationen werden geladen...</p>
 
-        <!-- Der eigentliche Kalender-Container -->
+
         <div class="calendar-wrapper">
-            <!-- Die Überschrift über dem Kalender (Monatsname & Jahr) inkl. Navigation -->
             <div class="calendar-nav">
                 <button id="prev-year" class="nav-btn" title="Vorheriges Jahr">&laquo;</button>
                 <button id="prev-month" class="nav-btn" title="Vorheriger Monat">&lsaquo;</button>
@@ -27,9 +26,7 @@
                 <button id="next-year" class="nav-btn" title="Nächstes Jahr">&raquo;</button>
             </div>
 
-            <!-- In dieses Grid wird das Kalenderblatt per JS gezeichnet -->
             <div id="calendar-grid" class="calendar-grid">
-                <!-- Die Wochentags-Reihe (wird statisch angelegt) -->
                 <div class="weekday-header">Mo</div>
                 <div class="weekday-header">Di</div>
                 <div class="weekday-header">Mi</div>
@@ -38,13 +35,18 @@
                 <div class="weekday-header">Sa</div>
                 <div class="weekday-header">So</div>
 
-                <!-- Ab hier generiert JS die Tage-Kästchen -->
             </div>
+        </div>
+
+        <div class="historical-events" id="historical-events-container">
+            <h3>Historische Ereignisse an diesem Tag</h3>
+            <ul id="historical-events-list">
+                <li>Lade Ereignisse...</li>
+            </ul>
         </div>
     </div>
 
-    <!-- Verknüpfung der Logik -->
-    <script src="js/script.js"></script>
+    <script src="js/calender_logic.js"></script>
 </body>
 
 </html>

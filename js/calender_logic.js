@@ -1,4 +1,4 @@
-﻿const heute = new Date();
+const heute = new Date();
 const wochentage = ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"];
 const monate = [
     "Januar", "Februar", "März", "April", "Mai", "Juni",
@@ -90,10 +90,8 @@ if (infoTextElement) {
         `im Monat ${monatsName} des Jahres ${aktuellesJahr}. Heute ist ${feiertagText} gesetzlicher Feiertag.`;
 }
 
-// Diese statische Zuweisung wurde in renderCalendar() verschoben, damit sie sich aktualisiert.
-
 // TERMINE (LocalStorage)
-// Wir laden Termine aus dem LocalStorage oder starten mit einem leeren Objekt
+// Wir laden Termine aus dem LocalStorage 
 let termine = JSON.parse(localStorage.getItem('termine')) || {};
 
 function saveTermin(datumKey, text) {
@@ -221,3 +219,101 @@ document.getElementById('next-month')?.addEventListener('click', () => {
 });
 
 renderCalendar();
+
+// HISTORISCHE EREIGNISSE (Wikipedia API)
+async function listHistoricalEvents() {
+    const eventsList = document.getElementById("historical-events-list");
+    if (!eventsList) return;
+
+    const monatsNameLink = monate[heute.getMonth()];
+    const heuteTag = heute.getDate();
+    const wikipediaTitel = `${heuteTag}._${monatsNameLink}`;
+
+    eventsList.innerHTML = "<li>Lade historische Ereignisse von Wikipedia...</li>";
+
+    try {
+
+        const response = await fetch(`https://de.wikipedia.org/w/api.php?action=parse&format=json&page=${encodeURIComponent(wikipediaTitel)}&prop=text&origin=*`);
+
+        if (!response.ok) {
+            throw new Error(`Fehler beim Abruf der Wikipedia API: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        if (data.error) {
+            throw new Error(`Wikipedia API Fehler: ${data.error.info}`);
+        }
+
+        const htmlString = data.parse.text['*'];
+
+
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(htmlString, "text/html");
+
+
+        const ereignisseHeadline = doc.getElementById("Ereignisse");
+        if (!ereignisseHeadline) {
+            throw new Error("Bereich 'Ereignisse' nicht gefunden auf der Wikipedia-Seite.");
+        }
+
+        let currentElement = ereignisseHeadline.parentElement;
+        const alleEreignisse = [];
+
+
+        while (currentElement && currentElement.nextElementSibling) {
+            currentElement = currentElement.nextElementSibling;
+
+            if (currentElement.tagName === "H2") {
+                break;
+            }
+
+            if (currentElement.tagName === "UL") {
+                const listItems = currentElement.querySelectorAll("li");
+                listItems.forEach(li => {
+                    let text = li.innerText.replace(/\[\d+\]/g, '').trim();
+                    if (text.length > 5) {
+                        alleEreignisse.push(text);
+                    }
+                });
+            }
+        }
+
+        if (alleEreignisse.length === 0) {
+            throw new Error("Keine Ereignis-Einträge gefunden.");
+        }
+
+        const randomEvents = [];
+        const eventsCopy = [...alleEreignisse];
+        const anzahlZuZeigen = Math.min(5, eventsCopy.length);
+
+        for (let i = 0; i < anzahlZuZeigen; i++) {
+            const randomIndex = Math.floor(Math.random() * eventsCopy.length);
+            randomEvents.push(eventsCopy.splice(randomIndex, 1)[0]);
+        }
+
+        eventsList.innerHTML = "";
+        randomEvents.forEach(ereignisText => {
+            const li = document.createElement("li");
+
+
+            let trennungsIndex = ereignisText.indexOf(':');
+
+            if (trennungsIndex !== -1 && trennungsIndex < 15) {
+                const jahr = ereignisText.substring(0, trennungsIndex);
+                const restText = ereignisText.substring(trennungsIndex + 1).trim();
+                li.innerHTML = `<strong>${jahr}:</strong> ${restText}`;
+            } else {
+                li.innerHTML = ereignisText;
+            }
+
+            eventsList.appendChild(li);
+        });
+
+    } catch (error) {
+        console.error("Fehler beim Scraping der Wikipedia-Ereignisse:", error);
+        eventsList.innerHTML = `<li class="error">Die historischen Ereignisse der deutschsprachigen Wikipedia konnten leider nicht geladen werden.</li>`;
+    }
+}
+
+listHistoricalEvents();
