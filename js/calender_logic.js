@@ -8,13 +8,12 @@ const monate = [
 let aktuellesJahr = heute.getFullYear();
 let aktuellerMonatIndex = heute.getMonth();
 let aktuellerTag = heute.getDate();
-const aktuellerWochentagIndex = heute.getDay();
 
-const monatsName = monate[aktuellerMonatIndex];
-const wochentagName = wochentage[aktuellerWochentagIndex];
-const wievielterWochentag = Math.ceil(aktuellerTag / 7);
+let selectedJahr = heute.getFullYear();
+let selectedMonatIndex = heute.getMonth();
+let selectedTag = heute.getDate();
 
-// Feiertags-Prüfung (inkl. flexibler Feiertage)
+// Feiertags-Prüfung 
 function getFeiertagName(tag, monat, jahr) {
     const festeFeiertage = {
         "1.0": "Neujahr",
@@ -74,21 +73,39 @@ function getFeiertagName(tag, monat, jahr) {
     return null;
 }
 
-const heuteFeiertagName = getFeiertagName(aktuellerTag, aktuellerMonatIndex, aktuellesJahr);
-const feiertagText = heuteFeiertagName ? "ein" : "kein";
+function updateInfoText() {
+    const d = new Date(selectedJahr, selectedMonatIndex, selectedTag);
+    const mName = monate[selectedMonatIndex];
+    const wName = wochentage[d.getDay()];
+    const wWochentag = Math.ceil(selectedTag / 7);
 
-document.title = `Kalender - ${aktuellerTag}. ${monatsName} ${aktuellesJahr}`;
+    // Berechne den Tag des Jahres
+    const start = new Date(selectedJahr, 0, 0);
+    const diff = (d - start) + ((start.getTimezoneOffset() - d.getTimezoneOffset()) * 60 * 1000);
+    const einerTag = 1000 * 60 * 60 * 24;
+    const tagDesJahres = Math.floor(diff / einerTag);
 
-const pageTitleElement = document.getElementById("page-title");
-if (pageTitleElement) {
-    pageTitleElement.innerText = `JS-Kalender: ${aktuellerTag}. ${monatsName} ${aktuellesJahr}`;
+    const fName = getFeiertagName(selectedTag, selectedMonatIndex, selectedJahr);
+    const fText = fName ? "ein" : "kein";
+
+    document.title = `Kalender - ${selectedTag}. ${mName} ${selectedJahr}`;
+
+    const ptElement = document.getElementById("page-title");
+    if (ptElement) {
+        ptElement.innerText = `JS-Kalender: ${selectedTag}. ${mName} ${selectedJahr}`;
+    }
+
+    const itElement = document.getElementById("info-text");
+    if (itElement) {
+        itElement.innerText = `Der ${selectedTag}. ${mName} ${selectedJahr} ist ein ${wName} und der ${wWochentag}. ${wName} ` +
+            `im Monat ${mName} des Jahres ${selectedJahr}. Außerdem ist es der ${tagDesJahres}. Tag des Jahres ${selectedJahr}. ` +
+            (selectedTag === heute.getDate() && selectedMonatIndex === heute.getMonth() && selectedJahr === heute.getFullYear() ? "Heute" : `Dieser Tag`) +
+            ` ist ${fText} gesetzlicher Feiertag.`;
+    }
 }
 
-const infoTextElement = document.getElementById("info-text");
-if (infoTextElement) {
-    infoTextElement.innerText = `Der ${aktuellerTag}. ${monatsName} ${aktuellesJahr} ist ein ${wochentagName} und der ${wievielterWochentag}. ${wochentagName} \n` +
-        `im Monat ${monatsName} des Jahres ${aktuellesJahr}. Heute ist ${feiertagText} gesetzlicher Feiertag.`;
-}
+// Initialer Aufruf
+updateInfoText();
 
 // TERMINE (LocalStorage)
 // Wir laden Termine aus dem LocalStorage 
@@ -141,6 +158,9 @@ function renderCalendar() {
         if (tag === heute.getDate() && aktuellerMonatIndex === heute.getMonth() && aktuellesJahr === heute.getFullYear()) {
             klassen += " today";
         }
+        if (tag === selectedTag && aktuellerMonatIndex === selectedMonatIndex && aktuellesJahr === selectedJahr) {
+            klassen += " selected";
+        }
         const feiertagName = getFeiertagName(tag, aktuellerMonatIndex, aktuellesJahr);
         if (feiertagName) {
             klassen += " holiday";
@@ -166,8 +186,19 @@ function renderCalendar() {
             tagDiv.appendChild(termineList);
         }
 
-        // Klick-Event für neuen Termin
+        // Klick-Event: Tag auswählen
         tagDiv.addEventListener('click', () => {
+            selectedTag = tag;
+            selectedMonatIndex = aktuellerMonatIndex;
+            selectedJahr = aktuellesJahr;
+
+            updateInfoText();
+            listHistoricalEvents();
+            renderCalendar(); // UI aktualisieren (selected Klasse setzen)
+        });
+
+        // Doppelklick-Event: Neuen Termin anlegen
+        tagDiv.addEventListener('dblclick', () => {
             let terminText = prompt(`Neuen Termin für den ${tag}. ${monate[aktuellerMonatIndex]} eingeben:`);
             if (terminText && terminText.trim() !== '') {
                 saveTermin(datumKey, terminText.trim());
@@ -225,9 +256,8 @@ async function listHistoricalEvents() {
     const eventsList = document.getElementById("historical-events-list");
     if (!eventsList) return;
 
-    const monatsNameLink = monate[heute.getMonth()];
-    const heuteTag = heute.getDate();
-    const wikipediaTitel = `${heuteTag}._${monatsNameLink}`;
+    const monatsNameLink = monate[selectedMonatIndex];
+    const wikipediaTitel = `${selectedTag}._${monatsNameLink}`;
 
     eventsList.innerHTML = "<li>Lade historische Ereignisse von Wikipedia...</li>";
 

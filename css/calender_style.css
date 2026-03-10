@@ -159,6 +159,18 @@ body {
     font-weight: bold;
 }
 
+.calendar-day.selected {
+    border: 2px solid #2563eb;
+    background-color: #eff6ff;
+    box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2);
+}
+
+.calendar-day.today.selected {
+    background-color: #1d4ed8;
+    color: #ffffff;
+    border-color: #1d4ed8;
+}
+
 .historical-events {
     margin-top: 30px;
     padding-top: 20px;
