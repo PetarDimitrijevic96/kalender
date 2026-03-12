@@ -132,7 +132,7 @@ function renderCalendar() {
         calendarHeaderElement.innerText = `${monate[aktuellerMonatIndex]} ${aktuellesJahr}`;
     }
 
-    // Alte Tage entfernen, außer die Wochentags-Header (die ersten 7 div-Elemente)
+    // Alte Tage entfernen, außer die Wochentags-Header 
     const allDays = calendarGrid.querySelectorAll('.calendar-day');
     allDays.forEach(day => day.remove());
 
@@ -194,10 +194,10 @@ function renderCalendar() {
 
             updateInfoText();
             listHistoricalEvents();
-            renderCalendar(); // UI aktualisieren (selected Klasse setzen)
+            renderCalendar();
         });
 
-        // Doppelklick-Event: Neuen Termin anlegen
+        // Doppelklick - Termin anlegen
         tagDiv.addEventListener('dblclick', () => {
             let terminText = prompt(`Neuen Termin für den ${tag}. ${monate[aktuellerMonatIndex]} eingeben:`);
             if (terminText && terminText.trim() !== '') {

@@ -209,3 +209,164 @@ body {
     color: #b91c1c;
     background-color: #fef2f2;
 }
+
+/* MEDIA QUERIES */
+
+
+@media (max-width: 768px) {
+    body {
+        padding: 20px 12px;
+    }
+
+    .calendar-app {
+        padding: 20px 16px;
+        border-radius: 10px;
+    }
+
+    #page-title {
+        font-size: 22px;
+    }
+
+    #info-text {
+        font-size: 13px;
+        padding: 12px;
+        margin-bottom: 20px;
+    }
+
+    #calendar-header-title {
+        font-size: 18px;
+    }
+
+    .nav-btn {
+        font-size: 15px;
+        padding: 4px 10px;
+        margin: 0 3px;
+    }
+
+    .calendar-grid {
+        gap: 5px;
+    }
+
+    .weekday-header {
+        font-size: 12px;
+        padding: 8px 0;
+    }
+
+    .calendar-day {
+        font-size: 13px;
+        border-radius: 5px;
+    }
+
+    .holiday-name {
+        font-size: 9px;
+        margin-top: 2px;
+    }
+
+    .historical-events h3 {
+        font-size: 17px;
+    }
+
+    #historical-events-list li {
+        font-size: 13px;
+        padding: 10px 12px;
+    }
+}
+
+/* Smartphone */
+@media (max-width: 480px) {
+    body {
+        padding: 10px 6px;
+    }
+
+    .calendar-app {
+        padding: 14px 10px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    #page-title {
+        font-size: 18px;
+        margin-bottom: 8px;
+    }
+
+    #info-text {
+        font-size: 12px;
+        padding: 10px;
+        margin-bottom: 16px;
+        border-left-width: 3px;
+    }
+
+    .calendar-nav {
+        margin-bottom: 10px;
+        padding-bottom: 8px;
+    }
+
+    #calendar-header-title {
+        font-size: 15px;
+    }
+
+    .nav-btn {
+        font-size: 13px;
+        padding: 3px 8px;
+        margin: 0 2px;
+        border-radius: 5px;
+    }
+
+    .calendar-grid {
+        gap: 3px;
+        margin-top: 6px;
+    }
+
+    .weekday-header {
+        font-size: 10px;
+        padding: 6px 0;
+        border-radius: 4px;
+    }
+
+    .calendar-day {
+        font-size: 11px;
+        border-radius: 4px;
+    }
+
+    .holiday-name {
+        display: none;
+        /* Bei sehr kleinen Screens ausblenden */
+    }
+
+    .historical-events {
+        margin-top: 20px;
+        padding-top: 14px;
+    }
+
+    .historical-events h3 {
+        font-size: 15px;
+        margin-bottom: 10px;
+    }
+
+    #historical-events-list li {
+        font-size: 12px;
+        padding: 9px 10px;
+        margin-bottom: 8px;
+        border-left-width: 3px;
+    }
+}
+
+/* Sehr kleine Geräte */
+@media (max-width: 360px) {
+    .nav-btn {
+        font-size: 11px;
+        padding: 2px 6px;
+    }
+
+    #calendar-header-title {
+        font-size: 13px;
+    }
+
+    .calendar-day {
+        font-size: 10px;
+    }
+
+    .weekday-header {
+        font-size: 9px;
+    }
+}
